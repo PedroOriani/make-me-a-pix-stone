@@ -4,11 +4,11 @@ namespace Pix.Services;
 {
     public class HealthService
     {
-        private readonly HealthRepository _repository
+        private readonly HealthRepository _repository;
             
         public HealthService(HealthRepository healthRepository)
         {
-            _repository healthRepository
+            _repository = healthRepository;
         }
         public string GetHealthMessage()
         {
