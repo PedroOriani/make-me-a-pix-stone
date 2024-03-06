@@ -1,5 +1,5 @@
 namespace Pix.Repositories;
-
+{
     public class HealthRepository
     {
         public HealthRepository()
@@ -11,3 +11,4 @@ namespace Pix.Repositories;
             return "I'm alive!";
         }
     }
+}
