@@ -8,7 +8,7 @@ namespace Pix.Controllers;
     [Route("[controller]")] //define qual a rota
     public class HealthController : ControllerBase
     {
-        private readonly HealthService _healthService
+        private readonly HealthService _healthService;
     
         public HealthController(HealthService healthService)
         {
