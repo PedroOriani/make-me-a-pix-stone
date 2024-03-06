@@ -9,7 +9,7 @@ namespace Pix.Controllers;
 public class HealthController : ControllerBase
 {
 
-    private HealthService _healthService;
+    private HealthService _healthService
 
     public HealthController(HealthService healthService)
     {

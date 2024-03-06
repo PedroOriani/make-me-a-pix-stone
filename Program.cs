@@ -1,4 +1,5 @@
 using Pix.Services;
+using Pix.Repositories
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<HealthService>();
+builder.Services.AddScoped<HealthRepository>();
 
 var app = builder.Build();
 

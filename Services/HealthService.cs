@@ -1,14 +1,17 @@
-namespace Pix.Services
-{
+using Pix.Repositories;
+
+namespace Pix.Services;
+
     public class HealthService
     {
-        public HealthService()
+
+        private HealthRepository _repository
+        public HealthService(HealthRepository healthRepository)
         {
-            Console.WriteLine("Oie");
+            _healthRepository healthRepository
         }
         public string GetHealthMessage()
         {
             return "I'm alive!";
         }
     }
-}
