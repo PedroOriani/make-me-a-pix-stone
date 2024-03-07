@@ -1,5 +1,5 @@
-using Pix.Services;
-using Pix.Repositories
+using Pix.Services; // Para HealthService
+using Pix.Repositories; // Para HealthRepository
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +12,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<HealthService>();
 builder.Services.AddScoped<HealthRepository>();
+builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<UserRepository>();
 
 var app = builder.Build();
 

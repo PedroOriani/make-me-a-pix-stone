@@ -1,7 +1,7 @@
 using Pix.Repositories;
 
 namespace Pix.Services;
-{
+
     public class HealthService
     {
         private readonly HealthRepository _repository;
@@ -15,4 +15,3 @@ namespace Pix.Services;
             return _repository.GetHealthMessage();
         }
     }
-}

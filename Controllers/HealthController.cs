@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Pix.Services;
 
 namespace Pix.Controllers;
-{
+
     [ApiController]
     [Route("[controller]")] //define qual a rota
     public class HealthController : ControllerBase
@@ -21,4 +21,4 @@ namespace Pix.Controllers;
             return Ok(_healthService.GetHealthMessage());
         }
     }
-}
+
