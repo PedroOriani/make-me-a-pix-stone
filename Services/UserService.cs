@@ -14,10 +14,9 @@ public class UserService
         _userRepository = userRepository;
     }
 
-    public User CreateUser(CreateUserDTO dto)
+    public async Task<User> CreateUser(CreateUserDTO dto)
     {
-        User user = _userRepository.CreateUser(dto.ToEntity());
-
+        User user = await _userRepository.CreateUsersync(dto.ToEntity());
         return user;
     }
 }

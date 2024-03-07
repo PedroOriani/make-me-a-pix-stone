@@ -1,14 +1,17 @@
+using Pix.Data;
 using Pix.Models;
 
 namespace Pix.Repositories;
 
-public class UserRepository
+public class UserRepository(AppDbContext context)
 {
-    private readonly User[] users = [];
+    private readonly AppDbContext _context = context;
 
-    public User CreateUser(User user)
+    public async Task<User> CreateUsersync(User user)
     {
-        _ = users.Append(user);
+        _context.User.Add(user);
+        await _context.SaveChangesAsync();
+
         return user;
     }
 }

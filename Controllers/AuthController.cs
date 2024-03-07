@@ -18,9 +18,9 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("sign-up")]
-    public IActionResult SignUp(CreateUserDTO dto)
+    public async Task<IActionResult> SignUp(CreateUserDTO dto)
     {
-        User user = _userService.CreateUser(dto);
+        User user = await _userService.CreateUser(dto);
         return CreatedAtAction(null, null, user);
     }
 }
