@@ -1,5 +1,6 @@
 using Pix.Services; // Para HealthService
-using Pix.Repositories; // Para HealthRepository
+using Pix.Repositories;
+using Pix.Middlewares; // Para HealthRepository
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,5 +30,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.Run();

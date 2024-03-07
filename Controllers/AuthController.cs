@@ -21,7 +21,6 @@ public class AuthController : ControllerBase
     public IActionResult SignUp(CreateUserDTO dto)
     {
         User user = _userService.CreateUser(dto);
-
         return CreatedAtAction(null, null, user);
     }
 }

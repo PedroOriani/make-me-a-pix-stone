@@ -1,4 +1,5 @@
 using Pix.DTOs;
+using Pix.Exceptions;
 using Pix.Models;
 using Pix.Repositories;
 
@@ -16,6 +17,7 @@ public class UserService
     public User CreateUser(CreateUserDTO dto)
     {
         User user = _userRepository.CreateUser(dto.ToEntity());
+
         return user;
     }
 }
