@@ -90,10 +90,46 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
         }
     }
 
-    public async Task<Key?> GetKeyInfo(string type, string value)
+    public async Task<KeyInfoDto?> GetKeyInfo(string type, string value, string token)
     {
         Key? key = await _keyRepository.GetKeyByTypeAndValue(type, value) ?? throw new NotFoundException("Key not found!");
 
-        return key;
+        User? user = await _userRepository.GetUserById(key.UserId) ?? throw new NotFoundException("User not found!");
+
+        Account? account = await _accountRepository.GetAccountById(key.AccountId) ?? throw new NotFoundException("Account not found!");
+
+        Bank? bank = await _bankRepository.GetBankById(account.BankId) ?? throw new NotFoundException("Bank not found!");
+
+        Bank? tokenBank = await _bankRepository.GetBankByToken(token) ?? throw new InvalidToken("Invalid token");
+
+        if (bank.Id != tokenBank.Id) throw new InvalidToken("The bank from the key does not correspond to the bank from the token");
+
+        KeyInfoDto keyInfo = new()
+        {
+            Key = new KeyDto
+            {
+                Value = key.Value,
+                Type = key.Type
+            },
+            User = new UserDto
+            {
+                Name = user.Name,
+                MaskedCpf = MaskCpf(user.Cpf)
+            },
+            Account = new AccountDto
+            {
+                Number = account.Number,
+                Agency = account.Agency,
+                BankName = bank.Name,
+                BankId = bank.Id
+            }
+        };
+
+        return keyInfo;
+    }
+
+    private static string MaskCpf(string cpf)
+    {
+        return cpf[..3] + ".***.***-" + cpf[^2..];
     }
 }
