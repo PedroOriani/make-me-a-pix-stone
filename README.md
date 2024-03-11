@@ -38,7 +38,7 @@ Retorno:
 	"key": {
 		"value": string,
 		"type": string // CPF, Email, Phone ou Random
-	},
+	    },
 	"user": {
 		"name": string,
 		"maskedCpf": string // somente os três primeiros e dois últimos dígitos
