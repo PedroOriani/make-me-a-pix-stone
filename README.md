@@ -8,7 +8,7 @@
 
 ```bash
 dotnet restore
-"Adicione as informações do banco de dados no arquivo appsettings.json"
+"Adicione as informações do banco de dados no arquivo appsettings.json e rode as migrations"
 dotnet ef migrations add <nome_da_migração>
 dotnet ef database update
 dotnet build
