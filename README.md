@@ -10,6 +10,44 @@
 
     POST /keys
 
+  ```bash
+Body:
+
+{
+  "key": {
+		"value": string,
+		"type": string // CPF, Email, Phone ou Random
+	}
+	"user": {
+		"cpf": string
+	},
+	"account": {
+		"number": string
+		"agency": string
+	} 
+}
+```
+
 • <strong>Retornar Chave:</strong> Retorna todas as informações de uma determinada chave pix.
 
     GET /keys/:type/:value
+
+  ```bash
+Retorno:
+{
+	"key": {
+		"value": string,
+		"type": string // CPF, Email, Phone ou Random
+	},
+	"user": {
+		"name": string,
+		"maskedCpf": string // somente os três primeiros e dois últimos dígitos
+	},
+	"account": {
+		"number": string,
+		"agency": string,
+		"bankName": string,
+		"bankId": string
+	}
+}
+```
