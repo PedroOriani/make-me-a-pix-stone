@@ -1,5 +1,12 @@
-version: '3.8'
 services:
+  dotnet_app:
+    container_name: dotnet_app
+    build: ../
+    ports:
+      - 5045:5045
+    depends_on:
+      - database
+  
   node-exporter:
     image: quay.io/prometheus/node-exporter:latest
     command:
@@ -26,6 +33,28 @@ services:
       - 3000:3000
     volumes:
       - grafana:/var/lib/grafana
+  
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:latest
+    container_name: postgres-exporter
+    ports:
+      - 9187:9187
+    environment:
+      - DATA_SOURCE_URI=187.87.249.22:5439/postgres?sslmode=disable
+      - DATA_SOURCE_USER=postgres
+      - DATA_SOURCE_PASS=2483
+
+  database:
+    image: postgres
+    container_name: postgresql
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=2483
+    ports:
+      - '5439:5432'
+    volumes:
+      - 'databasevolume:/var/lib/postgresql/data'
 
 volumes:
+  databasevolume:
   grafana:
