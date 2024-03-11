@@ -18,14 +18,15 @@ public class KeyRepository(AppDbContext context)
     public async Task<int> CountBankUserKeys(int userId, int bankId)
 {
     string query = @"
-        SELECT COUNT(""k"".""UserId"") AS ""QuantidadeDeChaves""
-        FROM ""Keys"" ""k""
-        JOIN ""Accounts"" ""a"" ON ""k"".""AccountId"" = ""a"".""Id""
-        JOIN ""Banks"" ""b"" ON ""a"".""BankId"" = ""b"".""Id""
-        WHERE ""k"".""UserId"" = {0}
-        AND ""b"".""Id"" = {1}";
+    SELECT * FROM ""Keys"" 
+    WHERE ""UserId"" = " + userId + @" 
+    AND ""AccountId"" IN 
+        ( SELECT ""Id"" 
+        FROM ""Accounts"" 
+        WHERE ""UserId"" = " + userId + @"
+        AND ""BankId"" = " + bankId + @")";
 
-    int count = await _context.Keys.FromSqlRaw(query, userId, bankId).AsNoTracking().CountAsync();
+    int count = await _context.Keys.FromSqlRaw(query).AsNoTracking().CountAsync();
 
     return count;
 }

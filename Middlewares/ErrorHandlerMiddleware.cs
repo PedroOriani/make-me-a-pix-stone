@@ -29,6 +29,7 @@ public class ErrorHandlerMiddleware(RequestDelegate next)
             InvalidTypeException _ => new ExceptionResponse(HttpStatusCode.BadRequest, exception.Message),
             InvalidFormatException _ => new ExceptionResponse(HttpStatusCode.BadRequest, exception.Message),
             InvalidToken _ => new ExceptionResponse(HttpStatusCode.Unauthorized, exception.Message),
+            LimitExceededException _ => new ExceptionResponse(HttpStatusCode.BadRequest, exception.Message),
             _ => new ExceptionResponse(HttpStatusCode.InternalServerError, "Internal server error. Please retry later.")
         };
 

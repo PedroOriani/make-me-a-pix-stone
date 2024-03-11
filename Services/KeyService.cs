@@ -53,8 +53,9 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
         var count = await _keyRepository.CountUserKeys(user.Id);
         if (count >= 20) throw new LimitExceededException("User cannot have more than 20 keys");
         Console.WriteLine(count);
+
         // Verify if there is an account
-        Account? account = await _accountRepository.GetAccountByNum(data.Number);  
+        Account? account = await _accountRepository.GetAccountByNum(data.Number, bank.Id);  
         if (account == null) {
             Account newAccount = new(data.Agency, data.Number)
             {
