@@ -4,6 +4,7 @@ using Pix.Middlewares;
 using Pix.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,11 +69,17 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMetricServer();
+
+app.UseHttpMetrics(options => options.AddCustomLabel("host", context => context.Request.Host.Host));
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapMetrics();
 
 app.UseMiddleware<ErrorHandlerMiddleware>();
 
