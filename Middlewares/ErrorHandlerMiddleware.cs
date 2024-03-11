@@ -23,7 +23,12 @@ public class ErrorHandlerMiddleware(RequestDelegate next)
     {
         ExceptionResponse response = exception switch
         {
-            EmailAlreadyExistsException _ => new ExceptionResponse(HttpStatusCode.Conflict, exception.Message),
+            NotFoundException _ => new ExceptionResponse(HttpStatusCode.NotFound, exception.Message),
+            UnavailableKeyException _ => new ExceptionResponse(HttpStatusCode.Conflict, exception.Message),
+            CpfDifferentException _ => new ExceptionResponse(HttpStatusCode.Conflict, exception.Message),
+            InvalidTypeException _ => new ExceptionResponse(HttpStatusCode.BadRequest, exception.Message),
+            InvalidFormatException _ => new ExceptionResponse(HttpStatusCode.BadRequest, exception.Message),
+            InvalidToken _ => new ExceptionResponse(HttpStatusCode.Unauthorized, exception.Message),
             _ => new ExceptionResponse(HttpStatusCode.InternalServerError, "Internal server error. Please retry later.")
         };
 

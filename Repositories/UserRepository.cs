@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Pix.Data;
 using Pix.Models;
 
@@ -7,11 +8,13 @@ public class UserRepository(AppDbContext context)
 {
     private readonly AppDbContext _context = context;
 
-    public async Task<User> CreateUsersync(User user)
+    public async Task<User?> GetUserByCpf(string cpf)
     {
-        _context.User.Add(user);
-        await _context.SaveChangesAsync();
+        return await _context.Users.FirstOrDefaultAsync(u => u.Cpf.Equals(cpf));
+    }
 
-        return user;
+    public async Task<User?> GetUserById(int id)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Id.Equals(id));
     }
 }

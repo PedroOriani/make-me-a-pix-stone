@@ -5,5 +5,9 @@ namespace Pix.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> options): DbContext(options)
 {
-    public DbSet<User> User { get; set;}
+    public DbSet<User> Users { get; set; }
+    public DbSet<Key> Keys { get; set; }
+    public DbSet<Bank> Banks { get; set; }
+    public DbSet<Account> Accounts { get; set; }
+    
 }
