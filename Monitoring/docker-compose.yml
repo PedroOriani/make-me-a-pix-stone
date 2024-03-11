@@ -1,12 +1,22 @@
+version: '3.8'
 services:
-  dotnet_app:
-    container_name: dotnet_app
-    build: ../
+  postgres:
+    container_name: postgres
+    image: postgres
     ports:
-      - 5045:5045
-    depends_on:
-      - database
-  
+      - 9999:9999
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   node-exporter:
     image: quay.io/prometheus/node-exporter:latest
     command:
@@ -33,28 +43,24 @@ services:
       - 3000:3000
     volumes:
       - grafana:/var/lib/grafana
-  
+
   postgres-exporter:
-    image: quay.io/prometheuscommunity/postgres-exporter:latest
     container_name: postgres-exporter
+    image: quay.io/prometheuscommunity/postgres-exporter:latest
     ports:
       - 9187:9187
     environment:
-      - DATA_SOURCE_URI=187.87.249.22:5439/postgres?sslmode=disable
+      - DATA_SOURCE_URI=postgres:9999/postgres?sslmode=disable
       - DATA_SOURCE_USER=postgres
-      - DATA_SOURCE_PASS=2483
+      - DATA_SOURCE_PASS=postgres
 
-  database:
-    image: postgres
-    container_name: postgresql
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=2483
+  pix-hub-app:
+    image: pix-hub-app
     ports:
-      - '5439:5432'
-    volumes:
-      - 'databasevolume:/var/lib/postgresql/data'
+      - 5000:5000
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
 
 volumes:
-  databasevolume:
   grafana:
+  postgres:
