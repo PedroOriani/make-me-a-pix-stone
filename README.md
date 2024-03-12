@@ -3,6 +3,17 @@
 
   <p>A Make me a Pix API é uma aplicação que possibilita aos usuários a criarem suas chaves pix em suas contas bancárias para determinados bancos (PSP)</p>
 
+  <h3>Comandos</h3>
+  Para inicializar corretamente a aplicação, execute os seguintes comandos:
+
+```bash
+dotnet restore
+"Adicione as informações do banco de dados no arquivo appsettings.json e rode as migrations"
+dotnet ef migrations add <nome_da_migração>
+dotnet ef database update
+dotnet build
+```
+
 <h1>Rotas</h1>
 <h2>Keys</h2>
 • <strong>Criar Chave:</strong> Registra uma nova chave pix.
