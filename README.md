@@ -73,6 +73,6 @@ Retorno:
 
 ```bash
 - Configure os arquivos de Monitoring conforme suas informações: IP, portas, etc.
-- Abra dois terminais: em um rode a aplicação com "dotnet run" e no outro entre na pasta "/pix/Monitoring e rode o comando de docker compose up -d"
+- Abra dois terminais: em um rode a aplicação com "dotnet run" e no outro entre na pasta "/pix/Monitoring" e rode o comando de "docker compose up -d"
 - Acesse o Grafana em localhost:3000
 ```
