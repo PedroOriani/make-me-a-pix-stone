@@ -9,15 +9,9 @@ namespace Pix.Controllers;
 
 [ApiController]
 [Route("keys")]
-public class KeyController(KeyService keyService, UserRepository userRepository, AccountRepository accountRepository, BankRepository bankRepository) : ControllerBase
+public class KeyController(KeyService keyService) : ControllerBase
 {
     private readonly KeyService _keyService = keyService;
-
-    private readonly UserRepository _userRepository = userRepository;
-
-    private readonly AccountRepository _accountRepository = accountRepository;
-
-    private readonly BankRepository _bankRepository = bankRepository;
 
     [HttpPost]
     public async Task<IActionResult> CreateKey(CreateKeyDTO createKeyDTO)

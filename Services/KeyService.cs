@@ -19,30 +19,32 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
 
     public async Task<Key> CreateKey(CreateKeyDTO data, string token)
     {
-        // Create Key
-        Key newKey = data.ToEntity();
-
         // Verify Token
         Bank? bank = await _bankRepository.GetBankByToken(token) ?? throw new InvalidToken("Invalid token");
         // Verify Types
-        if (data.Type != "CPF" && data.Type != "Phone" && data.Type != "Email" && data.Type != "Random") throw new InvalidTypeException("Type must be CPF, Phone, Email or Random");
+        if (data.Key.Type != "CPF" && data.Key.Type != "Phone" && data.Key.Type != "Email" && data.Key.Type != "Random") throw new InvalidTypeException("Type must be CPF, Phone, Email or Random");
 
         // Verify Value Equals to CPF
-        if (data.Type == "CPF" )
+        if (data.Key.Type == "CPF" )
         {
-            if (data.Cpf != data.Value) throw new CpfDifferentException("The key must have the same value as the CPF");
+            if (data.User.Cpf != data.Key.Value) throw new CpfDifferentException("The key must have the same value as the CPF");
         }
 
         // Verify Value Type
-        var TypeIsValid = ValidateType(data.Type, data.Value);
+        var TypeIsValid = ValidateType(data.Key.Type, data.Key.Value);
         if (TypeIsValid == false) throw new InvalidFormatException("The value doesn't correspond to the type");
 
         // Verify if User exists
-        User? user = await _userRepository.GetUserByCpf(data.Cpf) ?? throw new NotFoundException("User not found!");
-        newKey.UserId = user.Id;
+        User? user = await _userRepository.GetUserByCpf(data.User.Cpf) ?? throw new NotFoundException("User not found!");
+
         // Verify if the key already exists
-        var availableKey = await _keyRepository.GetKeyByValue(data.Value);
+        var availableKey = await _keyRepository.GetKeyByValue(data.Key.Value);
         if (availableKey != null) throw new UnavailableKeyException("This key already exists");
+
+        Key newKey = new Key(data.Key.Type, data.Key.Value)
+        {
+            UserId = user.Id
+        };
 
         // Verify total Bank User Keys
         var countKeyBank = await _keyRepository.CountBankUserKeys(user.Id, bank.Id);
@@ -55,9 +57,9 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
         Console.WriteLine(count);
 
         // Verify if there is an account
-        Account? account = await _accountRepository.GetAccountByNum(data.Number, bank.Id);  
+        Account? account = await _accountRepository.GetAccountByNum(data.Account.Number, bank.Id);  
         if (account == null) {
-            Account newAccount = new(data.Agency, data.Number)
+            Account newAccount = new(data.Account.Agency, data.Account.Number)
             {
                 UserId = user.Id,
                 BankId = bank.Id

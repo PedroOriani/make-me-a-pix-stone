@@ -1,27 +1,35 @@
 using System.ComponentModel.DataAnnotations;
-using Pix.Models;
 
-namespace Pix.DTOs;
-
-public class CreateKeyDTO
+namespace Pix.DTOs
 {
-    [Required]
-    public required string Value { get; set; }
-
-    [Required]
-    public required string Type { get; set; }
-
-    [Required]
-    public required string Cpf { get; set; }
-
-    [Required]
-    public required string Number { get; set; }
-
-    [Required]
-    public required string Agency { get; set; }
-
-    public Key ToEntity()
+    public class CreateKeyDTO
     {
-        return new Key(value: Value, type: Type);
+        public KeyRequest Key { get; set; }
+        public UserRequest User { get; set; }
+        public AccountRequest Account { get; set; }
+    }
+
+    public class KeyRequest
+    {
+        [Required]
+        public string Value { get; set; }
+
+        [Required]
+        public string Type { get; set; }
+    }
+
+    public class UserRequest
+    {
+        [Required]
+        public string Cpf { get; set; }
+    }
+
+    public class AccountRequest
+    {
+        [Required]
+        public string Number { get; set; }
+
+        [Required]
+        public string Agency { get; set; }
     }
 }
