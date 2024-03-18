@@ -6,7 +6,13 @@ using Pix.Repositories;
 
 namespace Pix.Services;
 
-public class PaymentService(PaymentRepository paymentRepository, AccountRepository accountRepository,BankRepository bankRepository, KeyRepository keyRepository)
+public class PaymentResponseDTO
+{
+    public required PayDTO OriginalPayDTO { get; set; }
+    public int Id { get; set; }
+}
+
+public class PaymentService(PaymentRepository paymentRepository, AccountRepository accountRepository,BankRepository bankRepository, KeyRepository keyRepository, MessageService messageService)
 {
     private readonly PaymentRepository _paymentRepository = paymentRepository;
 
@@ -16,7 +22,9 @@ public class PaymentService(PaymentRepository paymentRepository, AccountReposito
 
     private readonly AccountRepository _accountRepository = accountRepository;
 
-    public async Task<Payment> Pay (PayDTO data, string token)
+    private readonly MessageService _messageService = messageService;
+
+    public async Task<PaymentResponseDTO> Pay (PayDTO data, string token)
     {
         Bank? bank = await _bankRepository.GetBankByToken(token) ?? throw new InvalidToken("Invalid token");
 
@@ -32,6 +40,23 @@ public class PaymentService(PaymentRepository paymentRepository, AccountReposito
             PaymentProviderAccountId = account.Id,
         };
 
-        return await _paymentRepository.Pay(newPayment);
+        Payment payment =  await _paymentRepository.Pay(newPayment);
+
+        var paymentDTO = new PaymentDTO
+        {
+            Id = payment.Id,
+            Origin = data.Origin,
+            Destiny = data.Destiny,
+            Amount = data.Amount,
+            Description = data.Description
+        };
+
+        _messageService.SendMessage(paymentDTO);
+
+        return new PaymentResponseDTO
+        {
+            OriginalPayDTO = data,
+            Id = payment.Id
+        };
     }
 }

@@ -6,8 +6,13 @@ namespace Pix.Models
 {
     public enum PaymentStatus
     {
+        [Display(Name = "PROCESSING")]
         PROCESSING,
+
+        [Display(Name = "FAILED")]
         FAILED,
+
+        [Display(Name = "SUCCESS")]
         SUCCESS
     }
 

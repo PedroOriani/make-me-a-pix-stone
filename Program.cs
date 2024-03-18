@@ -5,6 +5,7 @@ using Pix.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Prometheus;
+using Pix.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -55,6 +56,7 @@ builder.Services.AddSwaggerGen(opt =>
 builder.Services.AddScoped<HealthService>();
 builder.Services.AddScoped<KeyService>();
 builder.Services.AddScoped<PaymentService>();
+builder.Services.AddScoped<MessageService>();
 
 //Repositories
 builder.Services.AddScoped<HealthRepository>();
@@ -64,6 +66,8 @@ builder.Services.AddScoped<AccountRepository>();
 builder.Services.AddScoped<BankRepository>();
 builder.Services.AddScoped<PaymentRepository>();
 
+IConfigurationSection queueConfigurationSection = builder.Configuration.GetSection("QueueSettings");
+builder.Services.Configure<QueueConfig>(queueConfigurationSection);
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
