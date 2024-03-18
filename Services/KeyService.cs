@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Pix.DTOs;
 using Pix.Exceptions;
 using Pix.Models;
@@ -41,7 +40,7 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
         var availableKey = await _keyRepository.GetKeyByValue(data.Key.Value);
         if (availableKey != null) throw new UnavailableKeyException("This key already exists");
 
-        Key newKey = new Key(data.Key.Type, data.Key.Value)
+        Key newKey = new (data.Key.Value, data.Key.Type)
         {
             UserId = user.Id
         };
@@ -49,12 +48,10 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
         // Verify total Bank User Keys
         var countKeyBank = await _keyRepository.CountBankUserKeys(user.Id, bank.Id);
         if (countKeyBank >= 5) throw new LimitExceededException("User cannot have more than 5 keys in the same bank");
-        Console.WriteLine(countKeyBank);
 
         // Verify total User keys
         var count = await _keyRepository.CountUserKeys(user.Id);
         if (count >= 20) throw new LimitExceededException("User cannot have more than 20 keys");
-        Console.WriteLine(count);
 
         // Verify if there is an account
         Account? account = await _accountRepository.GetAccountByNum(data.Account.Number, bank.Id);  
@@ -62,10 +59,11 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
             Account newAccount = new(data.Account.Agency, data.Account.Number)
             {
                 UserId = user.Id,
-                BankId = bank.Id
+                BankId = bank.Id,
             };
-            Console.WriteLine(newAccount.Number);
+
             await _accountRepository.CreateAccount(newAccount);
+
             newKey.AccountId = newAccount.Id;
             Console.WriteLine("Created");
         }else{
@@ -75,7 +73,7 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
         return await _keyRepository.Createkey(newKey);
     }
 
-    private bool ValidateType(string type, string value)
+    private static bool ValidateType(string type, string value)
     {
         switch (type)
         {

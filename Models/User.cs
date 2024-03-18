@@ -14,6 +14,10 @@ public class User(string name, string cpf)
     public string Cpf { get; set; } = cpf;
 
     public List<Key>? keys;
-    
+
     public List<Account>? accounts;
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }

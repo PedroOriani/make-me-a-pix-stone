@@ -53,12 +53,16 @@ builder.Services.AddSwaggerGen(opt =>
 
 // Services
 builder.Services.AddScoped<HealthService>();
-builder.Services.AddScoped<HealthRepository>();
 builder.Services.AddScoped<KeyService>();
+builder.Services.AddScoped<PaymentService>();
+
+//Repositories
+builder.Services.AddScoped<HealthRepository>();
 builder.Services.AddScoped<KeyRepository>();
 builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<AccountRepository>();
 builder.Services.AddScoped<BankRepository>();
+builder.Services.AddScoped<PaymentRepository>();
 
 var app = builder.Build();
 

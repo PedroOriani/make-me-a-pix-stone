@@ -15,4 +15,8 @@ public class Bank(string name, string token)
     public string Token { get; set; } = token;
 
     public List<Account>? accounts;
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }

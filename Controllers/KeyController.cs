@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Pix.DTOs;
 using Pix.Exceptions;
-using Pix.Models;
-using Pix.Repositories;
 using Pix.Services;
 
 namespace Pix.Controllers;

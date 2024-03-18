@@ -20,6 +20,10 @@ public class Account(string agency, string number)
     public int BankId { get; set; }
 
     public Bank? bank;
-    
+
     public List<Key>? keys;
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }

@@ -9,5 +9,5 @@ public class AppDbContext(DbContextOptions<AppDbContext> options): DbContext(opt
     public DbSet<Key> Keys { get; set; }
     public DbSet<Bank> Banks { get; set; }
     public DbSet<Account> Accounts { get; set; }
-    
+    public DbSet<Payment> Payments { get; set; }
 }

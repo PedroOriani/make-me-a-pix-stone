@@ -8,7 +8,7 @@ public class Key(string value, string type)
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
 
-    public long Id { get; set;}
+    public int Id { get; set;}
 
     public string Value { get; set; } = value;
 
@@ -21,4 +21,8 @@ public class Key(string value, string type)
     public int AccountId { get; set; }
 
     public Account? account;
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 }
