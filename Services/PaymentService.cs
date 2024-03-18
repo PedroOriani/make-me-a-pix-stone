@@ -24,6 +24,8 @@ public class PaymentService(PaymentRepository paymentRepository, AccountReposito
 
     private readonly MessageService _messageService = messageService;
 
+    private readonly int IDEMPOTENCE_SECONDS = 30;
+
     public async Task<PaymentResponseDTO> Pay (PayDTO data, string token)
     {
         Bank? bank = await _bankRepository.GetBankByToken(token) ?? throw new InvalidToken("Invalid token");
@@ -39,6 +41,9 @@ public class PaymentService(PaymentRepository paymentRepository, AccountReposito
             PixKeyId = key.Id,
             PaymentProviderAccountId = account.Id,
         };
+
+        PaymentIdempotenceKey idempotenceKey = new(newPayment);
+        if (await CheckIfDuplicatedByIdempotence(idempotenceKey)) throw new RecentPaymentException($"Can't accept the same payment under {IDEMPOTENCE_SECONDS} seconds");
 
         Payment payment =  await _paymentRepository.Pay(newPayment);
 
@@ -58,5 +63,11 @@ public class PaymentService(PaymentRepository paymentRepository, AccountReposito
             OriginalPayDTO = data,
             Id = payment.Id
         };
+    }
+
+    private async Task<bool> CheckIfDuplicatedByIdempotence(PaymentIdempotenceKey key)
+    {
+        Payment? payment = await _paymentRepository.GetPaymentByAccountAndKey(key, IDEMPOTENCE_SECONDS);
+        return payment != null;
     }
 }

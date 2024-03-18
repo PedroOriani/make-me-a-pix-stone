@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Pix.Data;
 using Pix.Models;
 
@@ -13,4 +14,19 @@ public class PaymentRepository(AppDbContext context)
         await _context.SaveChangesAsync();
         return payment;
     }
+
+     public async Task<Payment?> GetPaymentByAccountAndKey(PaymentIdempotenceKey key, int seconds)
+        {
+            Console.WriteLine("ok");
+            DateTime secondsAgo = DateTime.UtcNow.AddSeconds(-seconds);
+            Payment? payment = await _context.Payments.Where(p => 
+                p.PixKeyId == key.PixKeyId &&
+                p.PaymentProviderAccountId == key.PaymentProviderAccountId &&
+                p.CreatedAt >= secondsAgo).FirstOrDefaultAsync();
+
+            Console.WriteLine("AKI");
+                
+            return payment;
+        }
+        
 }
