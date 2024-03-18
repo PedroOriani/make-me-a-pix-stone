@@ -16,23 +16,29 @@ export default function () {
     const randomBank = dataBank[Math.floor(Math.random() * dataBank.length)];
 
     const inputData = {
-        Key: generateRandomKey(randomUser),
-        User: {
-            Cpf: randomUser.Cpf,
+        origin: {
+            user: {
+                cpf: randomUser.cpf
+            },
+            account: {
+                number: "001",
+                agency: "0000003"
+            }
         },
-        Account: {
-            Number: `${Date.now + randomUser.Name}`,
-            Agency: `${Date.now + randomUser.Cpf}`
-        }
+        destiny: {
+            key: generateKey(randomUser)
+        },
+        amount: Math.floor(Math.random()*10000) + 1,
+        description: ""
     }
 
     const body = JSON.stringify(inputData);
     const headers = { "Content-Type": "application/json",
      'Authorization': 'Bearer' + randomBank.Token};
-    http.post("http://localhost:5045/keys", body, { headers })
+    http.post("http://localhost:5045/payment", body, { headers })
 }
 
-function generateRandomKey (user) {
+function generateKey (user) {
     const types = ['CPF', 'Email', "Phone", "Random"];
     const type = types[Math.floor(Math.random()*types.length)];
 
