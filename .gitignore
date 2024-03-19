@@ -1,2 +1,8 @@
 obj/
 bin/
+
+# Ignorar arquivos JSON grandes
+.k6/seed/existing_accounts.json
+.k6/seed/existing_banks.json
+.k6/seed/existing_keys.json
+.k6/seed/existing_users.json

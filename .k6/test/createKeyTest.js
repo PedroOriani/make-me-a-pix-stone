@@ -1,9 +1,9 @@
-import { http } from "k6";
+import http from "k6/http";
 import { SharedArray } from 'k6/data';
 
 export const options = {
-    vus: 2, // virtual users
-    duration: "20s"
+    vus: 5000, // virtual users
+    duration: "60s"
 }
 
 const dataUser = new SharedArray("users", () => JSON.parse(open("../seed/existing_users.json")))
@@ -15,21 +15,23 @@ export default function () {
     const randomUser = dataUser[Math.floor(Math.random() * dataUser.length)];
     const randomBank = dataBank[Math.floor(Math.random() * dataBank.length)];
 
+    console.log(randomBank.Token)
+
     const inputData = {
         Key: generateRandomKey(randomUser),
         User: {
             Cpf: randomUser.Cpf,
         },
         Account: {
-            Number: `${Date.now + randomUser.Name}`,
-            Agency: `${Date.now + randomUser.Cpf}`
+            Number: `${Date.now() + randomUser.Name}`,
+            Agency: `${Date.now() + randomUser.Cpf}`
         }
     }
 
     const body = JSON.stringify(inputData);
-    const headers = { "Content-Type": "application/json",
-     'Authorization': 'Bearer' + randomBank.Token};
-    http.post("http://localhost:5045/keys", body, { headers })
+    const headers = { "Content-Type": "application/json", 'Authorization': 'Bearer ' + randomBank.Token };
+    const response = http.post("http://localhost:5045/keys", body, { headers })
+    if (response.status !== 201) console.log(`Error creating key: ${response.body}`)
 }
 
 function generateRandomKey (user) {
@@ -41,12 +43,16 @@ function generateRandomKey (user) {
     switch (type) {
         case 'CPF':
             value = user.Cpf;
+            break;
         case 'Email':
             value = `${user.Cpf}@gmail.com`;
+            break;
         case 'Phone':
-            value = generatePhone();;
+            value = generatePhone();
+            break;
         case 'Random':
             value = (Number(user.Cpf) + 10000000000).toString();
+            break;
     }
 
     return { type, value }

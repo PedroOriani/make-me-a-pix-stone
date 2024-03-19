@@ -66,6 +66,32 @@ Retorno:
 <h2>Payments</h2>
 <strong>Realizar Pagamento:</strong> Registra um novo pagamento.
 
+    POST /payments
+
+  ```bash
+Body:
+
+{
+	"origin": {
+		"user": {
+			"cpf": string
+		},
+		"account": {
+			"number": string,
+			"agency": string,
+		}
+	},
+	"destiny": {
+		"key": { // chave pix do destinatário
+			"value": string
+			"type": string // CPF, Email, Phone ou Random
+		}
+	}
+	"amount": integer,
+	"description": string // opcional
+}
+```
+
 <h1>Monitoramento</h1>
 
 <h3>Comandos</h3>
@@ -76,3 +102,6 @@ Retorno:
 - Abra dois terminais: em um rode a aplicação com "dotnet run" e no outro entre na pasta "/pix/Monitoring" e rode o comando de "docker compose up -d"
 - Acesse o Grafana em localhost:3000
 ```
+
+
+https://github.com/PedroOriani/pix-consumer/settings

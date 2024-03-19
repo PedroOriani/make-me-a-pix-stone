@@ -18,7 +18,7 @@ public class KeyController(KeyService keyService) : ControllerBase
 
         if (authorizationHeader == null) throw new InvalidToken("Invalid Token");
 
-        var newKey = await _keyService.CreateKey(createKeyDTO, authorizationHeader);
+        var newKey = await _keyService.CreateKey(createKeyDTO, authorizationHeader.Split(" ")[1]);
 
         return CreatedAtAction(null, null, newKey);
     }
