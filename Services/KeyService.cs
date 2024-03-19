@@ -103,8 +103,6 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
 
         Bank? tokenBank = await _bankRepository.GetBankByToken(token) ?? throw new InvalidToken("Invalid token");
 
-        if (bank.Id != tokenBank.Id) throw new InvalidToken("The bank from the key does not correspond to the bank from the token");
-
         KeyInfoDto keyInfo = new()
         {
             Key = new KeyDto

@@ -159,11 +159,6 @@ async function generateKeys() {
     const randomAccount = dataAccount[Math.floor(Math.random() * dataAccount.length)];
     const randomUser = dataAccountUser[Math.floor(Math.random() * dataAccountUser.length)];
     
-    if (i === 0)
-    {
-      console.log(randomAccount);
-    console.log(randomUser)
-    }
     const createdAt = new Date();
     const updatedAt = new Date();
 

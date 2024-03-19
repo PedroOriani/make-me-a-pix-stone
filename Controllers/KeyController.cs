@@ -30,7 +30,7 @@ public class KeyController(KeyService keyService) : ControllerBase
 
         if (authorizationHeader == null) throw new InvalidToken("Invalid Token");
 
-        var keyInfo = await _keyService.GetKeyInfo(type, value, authorizationHeader) ?? throw new NotFoundException("Key not found!");
+        var keyInfo = await _keyService.GetKeyInfo(type, value, authorizationHeader.Split(" ")[1]) ?? throw new NotFoundException("Key not found!");
         
        return Ok(keyInfo);
     }

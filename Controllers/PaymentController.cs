@@ -19,7 +19,7 @@ public class PaymentController(PaymentService paymentService) : ControllerBase
 
         if (authorizationHeader == null) throw new InvalidToken("Invalid Token");
 
-        var newPayment = await _paymentService.Pay(payDTO, authorizationHeader);
+        var newPayment = await _paymentService.Pay(payDTO, authorizationHeader.Split(" ")[1]);
 
         return CreatedAtAction(null, null, newPayment);
     }
