@@ -23,26 +23,26 @@ async function run() {
 
   const start = new Date();
 
-  // // users
-  // const users = generateUsers();
-  // await populateUsers(users);
-  // generateJson("./seed/existing_users.json", users);
+  // users
+  const users = generateUsers();
+  await populateUsers(users);
+  generateJson("./seed/existing_users.json", users);
 
-  // console.log("Closing DB connection...");
+  console.log("Closing DB connection...");
 
-  // //banks
-  // const banks = generateBanks();
-  // await populateBanks(banks);
-  // generateJson("./seed/existing_banks.json", banks);
+  //banks
+  const banks = generateBanks();
+  await populateBanks(banks);
+  generateJson("./seed/existing_banks.json", banks);
 
-  // console.log("Closing DB connection...");
+  console.log("Closing DB connection...");
 
-  // //accounts
-  // const accounts = await generateAccounts();
-  // await populateAccounts(accounts);
-  // generateJson("./seed/existing_accounts.json", accounts);
+  //accounts
+  const accounts = await generateAccounts();
+  await populateAccounts(accounts);
+  generateJson("./seed/existing_accounts.json", accounts);
 
-  // console.log("Closing DB connection...");
+  console.log("Closing DB connection...");
 
   //keys
   const keys = await generateKeys();

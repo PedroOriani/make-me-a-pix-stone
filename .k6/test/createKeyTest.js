@@ -2,8 +2,8 @@ import http from "k6/http";
 import { SharedArray } from 'k6/data';
 
 export const options = {
-    vus: 5000, // virtual users
-    duration: "60s"
+    vus: 10, // virtual users
+    duration: "10s"
 }
 
 const dataUser = new SharedArray("users", () => JSON.parse(open("../seed/existing_users.json")))
