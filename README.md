@@ -92,18 +92,22 @@ Body:
 }
 ```
 
-<h3>Para essa rota, é necessário a utilização de outros dois repositorios:</h3>
+<p>Para essa rota, é necessário a utilização de outros dois repositorios</p>
 
     ```bash
-        - Consumer: https://github.com/PedroOriani/pix-consumer/settings
-        - Mock: https://github.com/DiegoPinho/psp-mockl
+        • Consumer: https://github.com/PedroOriani/pix•consumer/settings
+        • Mock: https://github.com/DiegoPinho/psp-mockl
     ```
 
-    No consumer existe um docker compose com a configuração do RabbitMQ (software de mensageria utilizada no projeto). Para faze-lo rodar é necessário apenas utilizar o comando:
+<p>No consumer existe um docker compose com a configuração do RabbitMQ (software de mensageria utilizada no projeto). Para fazê-lo rodar é necessário apenas utilizar o comando:</p>
 
 	```bash
         docker compose up
     ```
+
+<p>O Mock serve de simulador para possível respostas adversas que o consumer pode encontrar durante o processamento</p>
+
+<h3> Todos os três repositórios e o RabbitMQ devem estar rodando no momento em que a requisição acontecer </h3>
 
 <h1>Monitoramento</h1>
 
