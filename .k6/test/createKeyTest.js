@@ -3,7 +3,11 @@ import { SharedArray } from 'k6/data';
 
 export const options = {
     vus: 10, // virtual users
-    duration: "10s"
+    duration: "10s",
+    thresholds: {
+        http_req_failed: ['rate<0.01'], // http errors should be less than 1%
+        http_req_duration: ['p(95)<200'], // 95% of requests should be below 200ms
+      },
 }
 
 const dataUser = new SharedArray("users", () => JSON.parse(open("../seed/existing_users.json")))
