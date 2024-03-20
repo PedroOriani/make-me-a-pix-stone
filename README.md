@@ -92,6 +92,19 @@ Body:
 }
 ```
 
+<h3>Para essa rota, é necessário a utilização de outros dois repositorios:</h3>
+
+    ```bash
+        - Consumer: https://github.com/PedroOriani/pix-consumer/settings
+        - Mock: https://github.com/DiegoPinho/psp-mockl
+    ```
+
+    No consumer existe um docker compose com a configuração do RabbitMQ (software de mensageria utilizada no projeto). Para faze-lo rodar é necessário apenas utilizar o comando:
+
+	```bash
+        docker compose up
+    ```
+
 <h1>Monitoramento</h1>
 
 <h3>Comandos</h3>
@@ -103,5 +116,13 @@ Body:
 - Acesse o Grafana em localhost:3000
 ```
 
+<h1>Monitoramento</h1>
 
-https://github.com/PedroOriani/pix-consumer/settings
+<h3>Comandos</h3>
+  Para inicializar corretamente o monitoramento da aplicação, siga os seguintes passos:
+
+```bash
+- Configure os arquivos de Monitoring conforme suas informações: IP, portas, etc.
+- Abra dois terminais: em um rode a aplicação com "dotnet run" e no outro entre na pasta "/pix/Monitoring" e rode o comando de "docker compose up -d"
+- Acesse o Grafana em localhost:3000
+```
