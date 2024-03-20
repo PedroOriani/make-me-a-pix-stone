@@ -4,17 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Pix.Models
 {
-    public enum PaymentStatus
-    {
-        [Display(Name = "PROCESSING")]
-        PROCESSING,
-
-        [Display(Name = "FAILED")]
-        FAILED,
-
-        [Display(Name = "SUCCESS")]
-        SUCCESS
-    }
 
     public class Payment
     {
@@ -22,7 +11,7 @@ namespace Pix.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        public PaymentStatus Status { get; set; } = PaymentStatus.PROCESSING;
+        public string Status { get; set; } = "PROCESSING";
 
         public int Amount { get; set; }
 

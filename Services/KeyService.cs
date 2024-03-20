@@ -65,7 +65,6 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
             await _accountRepository.CreateAccount(newAccount);
 
             newKey.AccountId = newAccount.Id;
-            Console.WriteLine("Created");
         }else{
             newKey.AccountId = account.Id;
         }

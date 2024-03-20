@@ -2,8 +2,8 @@ import http from "k6/http";
 import { SharedArray } from 'k6/data';
 
 export const options = {
-    vus: 10, // virtual users
-    duration: "10s",
+    vus: 50, // virtual users
+    duration: "30s",
     thresholds: {
         http_req_failed: ['rate<0.01'], // http errors should be less than 1%
         http_req_duration: ['p(95)<200'], // 95% of requests should be below 200ms
@@ -55,7 +55,7 @@ function generateRandomKey (user) {
             value = generatePhone();
             break;
         case 'Random':
-            value = (Number(user.Cpf) + 10000000000).toString();
+            value = (Number(user.Cpf) + Math.floor(Math.random() * 10000) + 1).toString();
             break;
     }
 

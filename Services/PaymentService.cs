@@ -32,7 +32,7 @@ public class PaymentService(PaymentRepository paymentRepository, AccountReposito
 
         var key = await _keyRepository.GetKeyByValue(data.Destiny.Key.Value) ?? throw new NotFoundException("This key doesn't exist");
 
-        var account = await _accountRepository.GetAccountByNum(data.Origin.Account.Number, bank.Id) ?? throw new NotFoundException("This account doesn't exist");
+        var account = await _accountRepository.GetAccountByNum(data.Origin.Account.Number) ?? throw new NotFoundException("This account doesn't exist");
 
         Payment newPayment = new()
         {

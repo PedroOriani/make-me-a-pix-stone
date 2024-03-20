@@ -21,6 +21,7 @@ public class ErrorHandlerMiddleware(RequestDelegate next)
 
     private static void HandleException(HttpContext context, Exception exception)
     {
+        Console.WriteLine(exception.InnerException);
         ExceptionResponse response = exception switch
         {
             NotFoundException _ => new ExceptionResponse(HttpStatusCode.NotFound, exception.Message),
