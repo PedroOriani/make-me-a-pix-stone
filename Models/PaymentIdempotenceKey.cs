@@ -4,5 +4,7 @@ namespace Pix.Models
     {
         public int PixKeyId { get; } = payment.PixKeyId;
         public int PaymentProviderAccountId { get; } = payment.PaymentProviderAccountId;
+        public int Amount { get; } = payment.Amount;
+        public string? Description { get; } = payment.Description;
     }
 }

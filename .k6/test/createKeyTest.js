@@ -2,8 +2,8 @@ import http from "k6/http";
 import { SharedArray } from 'k6/data';
 
 export const options = {
-    vus: 50, // virtual users
-    duration: "30s",
+    vus: 100, // virtual users
+    duration: "60s",
     thresholds: {
         http_req_failed: ['rate<0.01'], // http errors should be less than 1%
         http_req_duration: ['p(95)<200'], // 95% of requests should be below 200ms
@@ -18,8 +18,6 @@ export default function () {
 
     const randomUser = dataUser[Math.floor(Math.random() * dataUser.length)];
     const randomBank = dataBank[Math.floor(Math.random() * dataBank.length)];
-
-    console.log(randomBank.Token)
 
     const inputData = {
         Key: generateRandomKey(randomUser),

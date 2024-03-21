@@ -15,13 +15,15 @@ public class PaymentRepository(AppDbContext context)
         return payment;
     }
 
-     public async Task<Payment?> GetPaymentByAccountAndKey(PaymentIdempotenceKey key, int seconds)
+     public async Task<Payment?> GetPaymentByKeyandTime(PaymentIdempotenceKey key, int seconds)
         {
 
             DateTime secondsAgo = DateTime.UtcNow.AddSeconds(-seconds);
             Payment? payment = await _context.Payments.Where(p => 
                 p.PixKeyId == key.PixKeyId &&
                 p.PaymentProviderAccountId == key.PaymentProviderAccountId &&
+                p.Amount == key.Amount &&
+                p.Description == key.Description &&
                 p.CreatedAt >= secondsAgo).FirstOrDefaultAsync();
                 
             return payment;

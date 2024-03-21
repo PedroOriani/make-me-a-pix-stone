@@ -12,7 +12,7 @@ public class PaymentResponseDTO
     public int Id { get; set; }
 }
 
-public class PaymentService(PaymentRepository paymentRepository, AccountRepository accountRepository,BankRepository bankRepository, KeyRepository keyRepository, MessageService messageService)
+public class PaymentService(PaymentRepository paymentRepository, UserRepository userRepository ,AccountRepository accountRepository,BankRepository bankRepository, KeyRepository keyRepository, MessageService messageService)
 {
     private readonly PaymentRepository _paymentRepository = paymentRepository;
 
@@ -24,15 +24,29 @@ public class PaymentService(PaymentRepository paymentRepository, AccountReposito
 
     private readonly MessageService _messageService = messageService;
 
+    private readonly UserRepository _userRepository = userRepository;
+
     private readonly int IDEMPOTENCE_SECONDS = 30;
 
     public async Task<PaymentResponseDTO> Pay (PayDTO data, string token)
     {
         Bank? bank = await _bankRepository.GetBankByToken(token) ?? throw new InvalidToken("Invalid token");
 
+        var user = await _userRepository.GetUserByCpf(data.Origin.User.Cpf) ?? throw new NotFoundException("This CPF doesn't exist");
+
         var key = await _keyRepository.GetKeyByValue(data.Destiny.Key.Value) ?? throw new NotFoundException("This key doesn't exist");
 
-        var account = await _accountRepository.GetAccountByNum(data.Origin.Account.Number) ?? throw new NotFoundException("This account doesn't exist");
+        var account = await _accountRepository.GetAccountByNum(data.Origin.Account.Number);
+
+        if (account == null) {
+            Account newAccount = new(data.Origin.Account.Agency, data.Origin.Account.Number)
+            {
+                UserId = user.Id,
+                BankId = bank.Id,
+            };
+
+            await _accountRepository.CreateAccount(newAccount);
+        }
 
         Payment newPayment = new()
         {
@@ -67,7 +81,7 @@ public class PaymentService(PaymentRepository paymentRepository, AccountReposito
 
     private async Task<bool> CheckIfDuplicatedByIdempotence(PaymentIdempotenceKey key)
     {
-        Payment? payment = await _paymentRepository.GetPaymentByAccountAndKey(key, IDEMPOTENCE_SECONDS);
+        Payment? payment = await _paymentRepository.GetPaymentByKeyandTime(key, IDEMPOTENCE_SECONDS);
         return payment != null;
     }
 }
