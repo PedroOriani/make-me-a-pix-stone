@@ -20,6 +20,7 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
     {
         // Verify Token
         Bank? bank = await _bankRepository.GetBankByToken(token) ?? throw new InvalidToken("Invalid token");
+        
         // Verify Types
         if (data.Key.Type != "CPF" && data.Key.Type != "Phone" && data.Key.Type != "Email" && data.Key.Type != "Random") throw new InvalidTypeException("Type must be CPF, Phone, Email or Random");
 
@@ -45,13 +46,13 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
             UserId = user.Id
         };
 
-        // Verify total Bank User Keys
-        var countKeyBank = await _keyRepository.CountBankUserKeys(user.Id, bank.Id);
-        if (countKeyBank >= 5) throw new LimitExceededException("User cannot have more than 5 keys in the same bank");
-
         // Verify total User keys
-        var count = await _keyRepository.CountUserKeys(user.Id);
-        if (count >= 20) throw new LimitExceededException("User cannot have more than 20 keys");
+        Key[] totalKeys = await _keyRepository.CountUserKeys(user.Id);
+        if (totalKeys.Length >= 20) throw new LimitExceededException("User cannot have more than 20 keys");
+
+        // Verify total Bank User Keys
+        Key[] totalKeyInThisBank = totalKeys.Where(k => k.Account.BankId.Equals(bank.Id)).ToArray();
+        if (totalKeyInThisBank.Length >= 5) throw new LimitExceededException("User cannot have more than 5 keys in this Bank");
 
         // Verify if there is an account
         Account? account = await _accountRepository.GetAccountByNum(data.Account.Number, bank.Id);  
@@ -63,6 +64,7 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
             };
 
             await _accountRepository.CreateAccount(newAccount);
+            Console.WriteLine("New Account Created");
 
             newKey.AccountId = newAccount.Id;
         }else{

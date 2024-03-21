@@ -14,28 +14,12 @@ public class KeyRepository(AppDbContext context)
         await _context.SaveChangesAsync();
         return key;
     }
-
-    public async Task<int> CountBankUserKeys(int userId, int bankId)
-{
-    string query = @"
-    SELECT * FROM ""Keys"" 
-    WHERE ""UserId"" = " + userId + @" 
-    AND ""AccountId"" IN 
-        ( SELECT ""Id"" 
-        FROM ""Accounts"" 
-        WHERE ""UserId"" = " + userId + @"
-        AND ""BankId"" = " + bankId + @")";
-
-    int count = await _context.Keys.FromSqlRaw(query).AsNoTracking().CountAsync();
-
-    return count;
-}
     
-    public async Task<int> CountUserKeys(int userId)
+    public async Task<Key[]> CountUserKeys(int userId)
     {
-        int count = await _context.Keys
-        .Where(k => k.UserId.Equals(userId)).CountAsync();
-        return count;
+        return await _context.Keys
+        .Include(k => k.Account)
+        .Where(k => k.UserId.Equals(userId)).ToArrayAsync();
     }
 
     public async Task<Key?> GetKeyByValue(string value)

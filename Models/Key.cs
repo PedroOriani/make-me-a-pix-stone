@@ -20,7 +20,7 @@ public class Key(string value, string type)
 
     public int AccountId { get; set; }
 
-    public Account? account;
+    public Account Account { get; set; } = null!;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
