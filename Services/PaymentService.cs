@@ -32,11 +32,11 @@ public class PaymentService(PaymentRepository paymentRepository, UserRepository 
     {
         Bank? bank = await _bankRepository.GetBankByToken(token) ?? throw new InvalidToken("Invalid token");
 
-        var user = await _userRepository.GetUserByCpf(data.Origin.User.Cpf) ?? throw new NotFoundException("This CPF doesn't exist");
+        User user = await _userRepository.GetUserByCpf(data.Origin.User.Cpf) ?? throw new NotFoundException("This CPF doesn't exist");
 
-        var key = await _keyRepository.GetKeyByValue(data.Destiny.Key.Value) ?? throw new NotFoundException("This key doesn't exist");
+        Key key = await _keyRepository.GetKeyByValue(data.Destiny.Key.Value) ?? throw new NotFoundException("This key doesn't exist");
 
-        var account = await _accountRepository.GetAccountByNum(data.Origin.Account.Number);
+        Account? account = await _accountRepository.GetAccountByNum(data.Origin.Account.Number);
 
         if (account == null) {
             Account newAccount = new(data.Origin.Account.Agency, data.Origin.Account.Number)
@@ -46,6 +46,7 @@ public class PaymentService(PaymentRepository paymentRepository, UserRepository 
             };
 
             await _accountRepository.CreateAccount(newAccount);
+            account = newAccount;
         }
 
         Payment newPayment = new()
