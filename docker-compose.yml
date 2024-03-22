@@ -49,5 +49,19 @@ services:
       - DATABASE__PASSWORD=postgres
       - DATABASE__NAME=pix
 
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.12.12-management
+    # network_mode: host
+    ports:
+      - 5672:5672
+      - 15672:15672
+    # environment:
+    #   - RABBITMQ_DEFAULT_USER=admin
+    #   - RABBITMQ_DEFAULT_PASS=admin
+    volumes:
+      - rabbitmq-volume:/var/lib/rabbitmq
+
 volumes:
   postgres-volume:
+  rabbitmq-volume:
