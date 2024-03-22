@@ -9,14 +9,9 @@ services:
       POSTGRES_PASSWORD: 2483
       POSTGRES_DB: pix
     ports:
-      - 5433:5432
+      - 5439:5432
     volumes:
       - postgres-volume:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
   
   pix:
     image: pix
@@ -28,13 +23,19 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - postgres
+      - migrate
     environment:
       - DATABASE__HOST=postgres
       - DATABASE__PORT=5432
       - DATABASE__USERNAME=postgres
       - DATABASE__PASSWORD=2483
       - DATABASE__NAME=pix
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5045/health"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
 
   migrate:
     image: pix-migrate
@@ -48,19 +49,23 @@ services:
       - DATABASE__USERNAME=postgres
       - DATABASE__PASSWORD=postgres
       - DATABASE__NAME=pix
+    depends_on:
+      - postgres
 
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:3.12.12-management
-    # network_mode: host
     ports:
       - 5672:5672
       - 15672:15672
-    # environment:
-    #   - RABBITMQ_DEFAULT_USER=admin
-    #   - RABBITMQ_DEFAULT_PASS=admin
     volumes:
       - rabbitmq-volume:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
 
 volumes:
   postgres-volume:

@@ -53,7 +53,7 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
         if (totalKeyInThisBank.Length >= 5) throw new LimitExceededException("User cannot have more than 5 keys in this Bank");
 
         // Verify if there is an account
-        Account? account = await _accountRepository.GetAccountByNum(data.Account.Number, bank.Id);  
+        Account? account = await _accountRepository.GetAccountByNumandBank(data.Account.Number, bank.Id);  
         if (account == null) {
             Account newAccount = new(data.Account.Agency, data.Account.Number)
             {
