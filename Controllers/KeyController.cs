@@ -1,6 +1,8 @@
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Pix.DTOs;
 using Pix.Exceptions;
+using Pix.Models;
 using Pix.Services;
 
 namespace Pix.Controllers;
@@ -13,12 +15,10 @@ public class KeyController(KeyService keyService) : ControllerBase
 
     [HttpPost]
     public async Task<IActionResult> CreateKey(CreateKeyDTO createKeyDTO)
-    {   
-        string? authorizationHeader = HttpContext.Request.Headers.Authorization;
+    {
+        if (HttpContext.Items["Bank"] is not Bank bank) throw new NotFoundException("This bank doesn't exist");
 
-        if (authorizationHeader == null) throw new InvalidToken("Invalid Token");
-
-        var newKey = await _keyService.CreateKey(createKeyDTO, authorizationHeader.Split(" ")[1]);
+        var newKey = await _keyService.CreateKey(createKeyDTO, bank);
 
         return CreatedAtAction(null, null, newKey);
     }
@@ -26,11 +26,7 @@ public class KeyController(KeyService keyService) : ControllerBase
     [HttpGet("{type}/{value}")]
     public async Task<IActionResult> GetKeyInfo(string type, string value)
     {
-        string? authorizationHeader = HttpContext.Request.Headers.Authorization;
-
-        if (authorizationHeader == null) throw new InvalidToken("Invalid Token");
-
-        var keyInfo = await _keyService.GetKeyInfo(type, value, authorizationHeader.Split(" ")[1]) ?? throw new NotFoundException("Key not found!");
+        var keyInfo = await _keyService.GetKeyInfo(type, value) ?? throw new NotFoundException("Key not found!");
         
        return Ok(keyInfo);
     }

@@ -28,10 +28,8 @@ public class PaymentService(PaymentRepository paymentRepository, UserRepository 
 
     private readonly int IDEMPOTENCE_SECONDS = 30;
 
-    public async Task<PaymentResponseDTO> Pay (PayDTO data, string token)
+    public async Task<PaymentResponseDTO> Pay (PayDTO data, Bank bank)
     {
-        Bank? bank = await _bankRepository.GetBankByToken(token) ?? throw new InvalidToken("Invalid token");
-
         User user = await _userRepository.GetUserByCpf(data.Origin.User.Cpf) ?? throw new NotFoundException("This CPF doesn't exist");
 
         Key key = await _keyRepository.GetKeyByValue(data.Destiny.Key.Value) ?? throw new NotFoundException("This key doesn't exist");
@@ -71,7 +69,16 @@ public class PaymentService(PaymentRepository paymentRepository, UserRepository 
             Description = data.Description
         };
 
-        _messageService.SendMessage(paymentDTO);
+        try
+        {
+            _messageService.SendMessage(paymentDTO);
+        }
+        catch
+        {
+            await _paymentRepository.FailPayment(payment);
+            throw new RabbitMQOfflineException("The payment was created, but since RabbitMQ is offline, it will be canceled");
+        }   
+        
 
         return new PaymentResponseDTO
         {

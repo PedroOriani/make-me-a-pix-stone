@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Pix.DTOs;
 using Pix.Exceptions;
+using Pix.Models;
 using Pix.Services;
 
 namespace Pix.Controllers;
@@ -15,11 +16,9 @@ public class PaymentController(PaymentService paymentService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Pay(PayDTO payDTO)
     {
-        string? authorizationHeader = HttpContext.Request.Headers.Authorization;
+        if (HttpContext.Items["Bank"] is not Bank bank) throw new NotFoundException("This bank doesn't exist");
 
-        if (authorizationHeader == null) throw new InvalidToken("Invalid Token");
-
-        var newPayment = await _paymentService.Pay(payDTO, authorizationHeader.Split(" ")[1]);
+        var newPayment = await _paymentService.Pay(payDTO, bank);
 
         return CreatedAtAction(null, null, newPayment);
     }

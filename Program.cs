@@ -47,10 +47,19 @@ builder.Services.AddSwaggerGen(opt =>
                     Id="Bearer"
                 }
             },
-            new string[]{}
+            Array.Empty<string>()
         }
     });
 });
+
+// Queue
+
+IConfigurationSection queueConfigurationSection = builder.Configuration.GetSection("QueueSettings");
+builder.Services.Configure<QueueConfig>(queueConfigurationSection);
+
+// Authentication
+
+
 
 // Services
 builder.Services.AddScoped<HealthService>();
@@ -66,8 +75,8 @@ builder.Services.AddScoped<AccountRepository>();
 builder.Services.AddScoped<BankRepository>();
 builder.Services.AddScoped<PaymentRepository>();
 
-IConfigurationSection queueConfigurationSection = builder.Configuration.GetSection("QueueSettings");
-builder.Services.Configure<QueueConfig>(queueConfigurationSection);
+builder.Services.AddTransient<AuthenticationHandler>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -77,12 +86,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Metrics
 app.UseMetricServer();
-
 app.UseHttpMetrics(options => options.AddCustomLabel("host", context => context.Request.Host.Host));
 
 app.UseHttpsRedirection();
 
+app.UseMiddleware<AuthenticationHandler>();
 app.UseAuthorization();
 
 app.MapControllers();

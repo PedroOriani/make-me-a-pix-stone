@@ -16,11 +16,9 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
 
     private readonly BankRepository _bankRepository = bankRepository;
 
-    public async Task<Key> CreateKey(CreateKeyDTO data, string token)
+    public async Task<Key> CreateKey(CreateKeyDTO data, Bank bank)
     {
-        // Verify Token
-        Bank? bank = await _bankRepository.GetBankByToken(token) ?? throw new InvalidToken("Invalid token");
-        
+       
         // Verify Types
         if (data.Key.Type != "CPF" && data.Key.Type != "Phone" && data.Key.Type != "Email" && data.Key.Type != "Random") throw new InvalidTypeException("Type must be CPF, Phone, Email or Random");
 
@@ -92,7 +90,7 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
         }
     }
 
-    public async Task<KeyInfoDto?> GetKeyInfo(string type, string value, string token)
+    public async Task<KeyInfoDto?> GetKeyInfo(string type, string value)
     {
         Key? key = await _keyRepository.GetKeyByTypeAndValue(type, value) ?? throw new NotFoundException("Key not found!");
 
@@ -101,8 +99,6 @@ public class KeyService(KeyRepository keyRepository, UserRepository userReposito
         Account? account = await _accountRepository.GetAccountById(key.AccountId) ?? throw new NotFoundException("Account not found!");
 
         Bank? bank = await _bankRepository.GetBankById(account.BankId) ?? throw new NotFoundException("Bank not found!");
-
-        Bank? tokenBank = await _bankRepository.GetBankByToken(token) ?? throw new InvalidToken("Invalid token");
 
         KeyInfoDto keyInfo = new()
         {
