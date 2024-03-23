@@ -1,33 +1,33 @@
-# Make me a Pix API
-<h1>Descrição</h1>
+# Pix API
+<h1>Description</h1>
 
-  <p>A Make me a Pix API é uma aplicação que possibilita aos usuários a criarem suas chaves pix em suas contas bancárias para determinados bancos (PSP)</p>
+  <p>Pix API is an application that enables users to create their Pix keys in their bank accounts for certain banks (PSP), make payments, and perform data verification.</p>
 
-  <h3>Comandos</h3>
-  Para inicializar corretamente a aplicação, execute os seguintes comandos:
+  <h3>Commands</h3>
+To properly initialize the application, execute the following commands:
 
-```bash
+bash
 dotnet restore
-"Adicione as informações do banco de dados no arquivo appsettings.json e rode as migrations"
-dotnet ef migrations add <nome_da_migração>
+"Add the database information to the appsettings.json file and run the migrations"
+dotnet ef migrations add <migration_name>
 dotnet ef database update
 dotnet build
-```
 
-<h1>Rotas</h1>
+
+<h1>Route</h1>
 <h2>Keys</h2>
-• <strong>Criar Chave:</strong> Registra uma nova chave pix.
+• <strong>Create Key:</strong> Registers a new Pix key.
 
 
     POST /keys
 
-  ```bash
+  bash
 Body:
 
 {
   "key": {
 		"value": string,
-		"type": string // CPF, Email, Phone ou Random
+		"type": string // CPF, Email, Phone or Random
 	}
 	"user": {
 		"cpf": string
@@ -37,22 +37,22 @@ Body:
 		"agency": string
 	} 
 }
-```
 
-• <strong>Retornar Chave:</strong> Retorna todas as informações de uma determinada chave pix.
+
+• <strong>Retrieve Key:</strong> Returns all information about a specific Pix key.
 
     GET /keys/:type/:value
 
-  ```bash
-Retorno:
+  bash
+Retrieve:
 {
 	"key": {
 		"value": string,
-		"type": string // CPF, Email, Phone ou Random
+		"type": string // CPF, Email, Phone or Random
 	    },
 	"user": {
 		"name": string,
-		"maskedCpf": string // somente os três primeiros e dois últimos dígitos
+		"maskedCpf": string // Only the first three and last two digits
 	},
 	"account": {
 		"number": string,
@@ -61,14 +61,14 @@ Retorno:
 		"bankId": string
 	}
 }
-```
+
 
 <h2>Payments</h2>
-<strong>Realizar Pagamento:</strong> Registra um novo pagamento.
+<strong>Make Payment:</strong> Registers a new payment.
 
     POST /payments
 
-  ```bash
+  bash
 Body:
 
 {
@@ -82,51 +82,52 @@ Body:
 		}
 	},
 	"destiny": {
-		"key": { // chave pix do destinatário
+		"key": { // Recipient's Pix key
 			"value": string
-			"type": string // CPF, Email, Phone ou Random
+			"type": string // CPF, Email, Phone or Random
 		}
 	}
 	"amount": integer,
-	"description": string // opcional
+	"description": string // optional
 }
-```
 
-<p>Para essa rota, é necessário a utilização de outros dois repositorios</p>
 
-    ```bash
-        • Consumer: https://github.com/PedroOriani/pix•consumer/settings
+<p>For this route, the use of two additional repositories is required.</p>
+
+    bash
+        • Consumer: https://github.com/PedroOriani/pix-payment-consumer/settings
         • Mock: https://github.com/DiegoPinho/psp-mockl
-    ```
+    
 
-<p>No consumer existe um docker compose com a configuração do RabbitMQ (software de mensageria utilizada no projeto). Para fazê-lo rodar é necessário apenas utilizar o comando:</p>
+<p>In the consumer, there is a docker-compose with the RabbitMQ configuration (the messaging software used in this project). To run it, you only need to use the command:</p>
 
-	```bash
+	bash
         docker compose up
-    ```
+    
 
-<p>O Mock serve de simulador para possível respostas adversas que o consumer pode encontrar durante o processamento</p>
+<p>Mock serves as a simulator for potential adverse responses that the consumer may face during processing.</p>
 
-<h3> Todos os três repositórios e o RabbitMQ devem estar rodando no momento em que a requisição acontecer </h3>
+<h3> All three repositories and RabbitMQ must be running at the time the request occurs. </h3>
 
-<h1>Monitoramento</h1>
+<h1>Monitoring</h1>
 
-<h3>Comandos</h3>
-  Para inicializar corretamente o monitoramento da aplicação, siga os seguintes passos:
+<h3>Commands</h3>
+To properly initialize the application monitoring, follow these steps:
 
-```bash
-- Configure os arquivos de Monitoring conforme suas informações: IP, portas, etc.
-- Abra dois terminais: em um rode a aplicação com "dotnet run" e no outro entre na pasta "/pix/Monitoring" e rode o comando de "docker compose up -d"
-- Acesse o Grafana em localhost:3000
-```
+bash
+- Configure the Monitoring files according to your information: IP, ports, etc.
+- Open two terminals: in one, run the application with "dotnet run" and in the other, navigate to the "/pix/Monitoring" folder and run the command "docker compose up -d".
+- Access Grafana at localhost:3000.
 
-<h1>Monitoramento</h1>
+<h1>Load Test </h1>
 
-<h3>Comandos</h3>
-  Para inicializar corretamente o monitoramento da aplicação, siga os seguintes passos:
+<h3>Commands</h3>
+To properly initialize load test, follow these steps:
 
-```bash
-- Configure os arquivos de Monitoring conforme suas informações: IP, portas, etc.
-- Abra dois terminais: em um rode a aplicação com "dotnet run" e no outro entre na pasta "/pix/Monitoring" e rode o comando de "docker compose up -d"
-- Acesse o Grafana em localhost:3000
-```
+bash
+“there are 3 tests: createKeyTest.js, getKeyInfoTest.js and payTest.js
+- Go to pasta .k6/test
+- Set up the .env file according to .env.example.
+- npm i
+- npm run seed
+- k6 run <test_name>
