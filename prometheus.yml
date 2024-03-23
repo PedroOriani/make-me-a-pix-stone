@@ -14,4 +14,4 @@ scrape_configs:
       - targets: ["postgres-exporter:9187"]
   - job_name: "pix"
     static_configs:
-      - targets: ["pix:8080"]
+      - targets: ["pix-api:8080"]

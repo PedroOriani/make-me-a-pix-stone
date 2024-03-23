@@ -12,11 +12,9 @@ public class PaymentResponseDTO
     public int Id { get; set; }
 }
 
-public class PaymentService(PaymentRepository paymentRepository, UserRepository userRepository ,AccountRepository accountRepository,BankRepository bankRepository, KeyRepository keyRepository, MessageService messageService)
+public class PaymentService(PaymentRepository paymentRepository, UserRepository userRepository ,AccountRepository accountRepository, KeyRepository keyRepository, MessageService messageService)
 {
     private readonly PaymentRepository _paymentRepository = paymentRepository;
-
-    private readonly BankRepository _bankRepository = bankRepository;
 
     private readonly KeyRepository _keyRepository = keyRepository;
 
