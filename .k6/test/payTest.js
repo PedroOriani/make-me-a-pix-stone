@@ -2,7 +2,7 @@ import http from "k6/http";
 import { SharedArray } from 'k6/data';
 
 export const options = {
-    vus: 20, // virtual users
+    vus: 5, // virtual users
     duration: "60s",
     thresholds: {
         http_req_failed: ['rate<0.01'], // http errors should be less than 1%

@@ -1,72 +1,140 @@
 version: '3.8'
 services:
-  
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    command:
+      - '--path.rootfs=/host'
+    pid: host
+    ports:
+      - 9100:9100
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+    networks:
+      - pix-api-network
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    networks:
+      - pix-api-network
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+    volumes:
+      - grafana:/var/lib/grafana
+    networks:
+      - pix-api-network
+
+  postgres-exporter:
+    image: quay.io/prometheuscommunity/postgres-exporter:latest
+    container_name: postgres-exporter
+    ports:
+      - 9187:9187
+    environment:
+      - DATA_SOURCE_URI=postgres:5432/postgres?sslmode=disable
+      - DATA_SOURCE_USER=postgres
+      - DATA_SOURCE_PASS=postgres
+    networks:
+      - pix-api-network
+
   postgres:
-    image: postgres
     container_name: postgres
+    image: postgres
+    ports:
+      - 5438:5432
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 2483
-      POSTGRES_DB: pix
-    ports:
-      - 5439:5432
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: pixAPI_docker
     volumes:
-      - postgres-volume:/var/lib/postgresql/data
-  
-  pix:
-    image: pix
-    container_name: pix
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pix-api-network
+
+  pix-api:
+    container_name: pix-api
+    image: pix_api
     build:
-      context: .
       dockerfile: Dockerfile
-    restart: unless-stopped
     ports:
       - 8080:8080
     depends_on:
-      - migrate
+      - postgres
     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
       - DATABASE__HOST=postgres
       - DATABASE__PORT=5432
       - DATABASE__USERNAME=postgres
-      - DATABASE__PASSWORD=2483
-      - DATABASE__NAME=pix
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5045/health"]
-      interval: 1m30s
-      timeout: 30s
-      retries: 5
-      start_period: 30s
+      - DATABASE__PASSWORD=postgres
+      - DATABASE__NAME=pixAPI_docker
+      - QueueSettings__HostName=rabbitmq
+    networks:
+      - pix-api-network
 
-  migrate:
-    image: pix-migrate
-    container_name: migrate
+  migrations:
+    container_name: pix-api-migrations
+    image: pix_api_migrations
     build:
-      context: .
       dockerfile: Dockerfile.migrations
+    depends_on:
+      - postgres
     environment:
       - DATABASE__HOST=postgres
       - DATABASE__PORT=5432
       - DATABASE__USERNAME=postgres
       - DATABASE__PASSWORD=postgres
-      - DATABASE__NAME=pix
+      - DATABASE__NAME=pixAPI_docker
+    networks:
+      - pix-api-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@gmail.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "16543:80"
     depends_on:
       - postgres
+    networks:
+      - pix-api-network
 
   rabbitmq:
-    container_name: rabbitmq
     image: rabbitmq:3.12.12-management
+    container_name: rabbitmq
+    hostname: rabbitmq
     ports:
       - 5672:5672
       - 15672:15672
     volumes:
-      - rabbitmq-volume:/var/lib/rabbitmq
+      - rabbitmq_data:/var/lib/rabbitmq
     healthcheck:
       test: ["CMD", "rabbitmqctl", "status"]
       interval: 30s
       timeout: 30s
       retries: 5
       start_period: 30s
+    networks:
+      - pix-api-network
 
+networks:
+  pix-api-network:
+    name: "pix-api-network"
+    
 volumes:
-  postgres-volume:
-  rabbitmq-volume:
+  grafana:
+  postgres:
+  rabbitmq_data:

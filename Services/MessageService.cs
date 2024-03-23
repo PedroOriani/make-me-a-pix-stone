@@ -3,7 +3,6 @@ using System.Text.Json;
 using Microsoft.Extensions.Options;
 using Pix.Config;
 using Pix.DTOs;
-using Pix.Models;
 using RabbitMQ.Client;
 
 namespace Pix.Services;

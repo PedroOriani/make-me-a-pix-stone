@@ -11,7 +11,7 @@ const knex = require("knex")({
 
 const VALUE = 1000000;
 const VALID_CPF = 10000000000;
-const ERASE_DATA = false;
+const ERASE_DATA = true;
 
 async function run() {
   if (ERASE_DATA) {

@@ -76,7 +76,7 @@ public class PaymentService(PaymentRepository paymentRepository, UserRepository 
         catch
         {
             await _paymentRepository.FailPayment(payment);
-            throw new RabbitMQOfflineException("The payment was created, but since RabbitMQ is offline, it will be canceled");
+            throw new RabbitMQOfflineException($"The payment was created, Id = ({paymentDTO.Id}), but since RabbitMQ is offline, it will be canceled");
         }   
         
 
