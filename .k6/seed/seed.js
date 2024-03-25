@@ -19,6 +19,7 @@ async function run() {
     await knex("Banks").del();
     await knex("Keys").del();
     await knex("Accounts").del();
+    await knex("Payments").del();
   }
 
   const start = new Date();
@@ -48,6 +49,14 @@ async function run() {
   const keys = await generateKeys();
   await populateKeys(keys);
   generateJson("./seed/existing_keys.json", keys);
+
+  //payments
+  const payments = await generatePayments();
+  await populatePayments(payments);
+  const paymentsDB = await knex.select('Id', 'Status').table('Payments');
+  generateJson("./seed/existing_payments.json", payments);
+  generateNDJSON("./seed/existing_payments.ndjson", paymentsDB)
+
 
   console.log("Closing DB connection...");
   await knex.destroy();
@@ -175,12 +184,67 @@ async function populateKeys(keys) {
   await knex.batchInsert(tableName, keys);
 }
 
+// Payments
+async function generatePayments() {
+  console.log(`Generating ${VALUE} payments...`);
+  const payments = [];
+
+  const dataKey = await knex.select('Id').table('Keys');
+  const dataAccount = await knex.select('Id').table('Accounts');
+
+  for (let i = 0; i < VALUE; i++) {
+
+    const status = ["SUCCESS", "FAILED"];
+
+    const randomAccount = dataAccount[Math.floor(Math.random() * dataAccount.length)];
+    const randomKey = dataKey[Math.floor(Math.random() * dataKey.length)];
+
+    const createdAt = new Date();
+    const updatedAt = new Date();
+
+    payments.push({
+      Status: status[Math.floor(Math.random() * status.length)],
+      Amount: faker.number.int({max: 100000}),
+      Description: faker.lorem.sentence(),
+      PixKeyId: randomKey.Id,
+      PaymentProviderAccountId: randomAccount.Id,
+      CreatedAt: createdAt,
+      UpdatedAt: updatedAt
+    });
+  }
+
+  return payments;
+}
+
+async function populatePayments(payments) {
+  console.log("Storing on DB...");
+
+  const tableName = "Payments";
+  await knex.batchInsert(tableName, payments);
+}
+
 //Json
 function generateJson(filepath, data) {
   if (fs.existsSync(filepath)) {
     fs.unlinkSync(filepath);
   }
   fs.writeFileSync(filepath, JSON.stringify(data));
+}
+
+//NDJSON
+function generateNDJSON(filepath, data) {
+  if (fs.existsSync(filepath)) {
+      fs.unlinkSync(filepath);
+  }
+
+  const stream = fs.createWriteStream(filepath, { flags: 'a' });
+
+  data.forEach(obj => {
+      const newObj = {id: obj.Id, status: obj.Status}
+      stream.write(JSON.stringify(newObj) + '\n');
+  });
+
+  stream.end();
 }
 
 function generateRandomKey (account, user, createdAt, updatedAt) {

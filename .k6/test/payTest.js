@@ -44,6 +44,6 @@ export default function () {
     const body = JSON.stringify(inputData);
     const headers = { "Content-Type": "application/json",
      'Authorization': 'Bearer ' + randomBank.Token};
-    const response = http.post("http://localhost:5045/Payment", body, { headers })
+    const response = http.post("http://localhost:8080/Payment", body, { headers })
     if (response.status !== 201) console.log(response);
 }

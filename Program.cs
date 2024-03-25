@@ -66,6 +66,7 @@ builder.Services.AddScoped<HealthService>();
 builder.Services.AddScoped<KeyService>();
 builder.Services.AddScoped<PaymentService>();
 builder.Services.AddScoped<MessageService>();
+builder.Services.AddScoped<ConcilliationService>();
 
 //Repositories
 builder.Services.AddScoped<HealthRepository>();

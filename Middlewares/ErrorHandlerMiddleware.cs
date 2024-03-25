@@ -34,6 +34,7 @@ public class ErrorHandlerMiddleware(RequestDelegate next)
             LimitExceededException _ => new ExceptionResponse(HttpStatusCode.BadRequest, exception.Message),
             RecentPaymentException _ => new ExceptionResponse(HttpStatusCode.BadRequest, exception.Message),
             RabbitMQOfflineException _ => new ExceptionResponse(HttpStatusCode.ServiceUnavailable, exception.Message),
+            DateGraterThanTodayException _ => new ExceptionResponse(HttpStatusCode.BadRequest, exception.Message),
             _ => new ExceptionResponse(HttpStatusCode.InternalServerError, "Internal server error. Please retry later.")
         };
 

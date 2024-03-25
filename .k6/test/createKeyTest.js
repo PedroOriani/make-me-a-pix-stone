@@ -32,7 +32,7 @@ export default function () {
 
     const body = JSON.stringify(inputData);
     const headers = { "Content-Type": "application/json", 'Authorization': 'Bearer ' + randomBank.Token };
-    const response = http.post("http://localhost:5045/keys", body, { headers })
+    const response = http.post("http://localhost:8080/keys", body, { headers })
     if (response.status !== 201) console.log(`Error creating key: ${response.body}`)
 }
 

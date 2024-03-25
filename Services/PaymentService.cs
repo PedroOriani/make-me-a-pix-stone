@@ -32,7 +32,7 @@ public class PaymentService(PaymentRepository paymentRepository, UserRepository 
 
         Key key = await _keyRepository.GetKeyByValue(data.Destiny.Key.Value) ?? throw new NotFoundException("This key doesn't exist");
 
-        Account? account = await _accountRepository.GetAccountByNum(data.Origin.Account.Number);
+        Account? account = await _accountRepository.GetAccountByNumandBank(data.Origin.Account.Number, bank.Id);
 
         if (account == null) {
             Account newAccount = new(data.Origin.Account.Agency, data.Origin.Account.Number)
@@ -58,7 +58,7 @@ public class PaymentService(PaymentRepository paymentRepository, UserRepository 
 
         Payment payment =  await _paymentRepository.Pay(newPayment);
 
-        var paymentDTO = new PaymentDTO
+        PaymentDTO paymentDTO = new()
         {
             Id = payment.Id,
             Origin = data.Origin,
@@ -69,7 +69,7 @@ public class PaymentService(PaymentRepository paymentRepository, UserRepository 
 
         try
         {
-            _messageService.SendMessage(paymentDTO);
+            _messageService.SendMessage(paymentDTO, "payments");
         }
         catch
         {

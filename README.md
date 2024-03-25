@@ -111,6 +111,36 @@ docker compose up
 
 <h3> All three repositories and RabbitMQ must be running at the time the request occurs. </h3>
 
+<h2>Concilliations</h2>
+
+It compares the informations in the database to te informations of the PSP.
+
+    POST /Concilliations
+
+```bash
+{
+	"date": "yyyy-MM-dd",
+	"file": "https://psp-files/transactions-2023-04-05.json",
+	"postback": "https://psp-backend/conciliation/status"
+}
+```
+
+<p> This route should retrive something like that:</p>
+
+```bash
+{
+	"databaseToFile": [ // tem no banco e não tem no arquivo
+		{"id": number, status: string}, // ...
+	],
+	"fileToDatabase": [ // tem no arquivo mas não tem no banco
+		{"id": number, status: string}, // ...
+	],
+	"differentStatus": [ // está nos dois mas com status divergentes
+		{"id": number}, // ...
+	]
+}
+```
+
 <h1>Monitoring</h1>
 
 <h3>Commands</h3>
@@ -121,6 +151,7 @@ To properly initialize the application monitoring, follow these steps:
 - Configure the Monitoring files according to your information: IP, ports, etc.
 - Open two terminals: in the first one, run the application with "dotnet run" and in the other, navigate to the "/pix/Monitoring" folder and run the command "docker compose up -d".
 - Access Grafana at localhost:3000.
+- Configure your dashboards according to your preferences.
 ```
 <h1>Load Test </h1>
 
